@@ -1,0 +1,21 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.4;
+import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC20/IERC20.sol";
+import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC721/IERC721.sol";
+contract TokenExchange{
+    IERC20 public token1;
+    address public owner1;
+    IERC721 public token2;
+    address public owner2;
+    
+    constructor(address _token1,address _owner1,address _token2,address _owner2){
+            token1=IERC20(_token1);
+            owner1=_owner1;
+            token2=IERC721(_token2);
+            owner2=_owner2;
+        }
+        function Transfer(uint _value1 , uint id) public{
+             
+             token1.transferFrom(owner1,owner2,_value1);
+             token2.transferFrom(owner2,owner1,id);
+        }}
