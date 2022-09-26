@@ -1,0 +1,47 @@
+const{expect}=require("chai");
+describe("Erc20 Contract",function(){
+    let Test20Contract;
+    let TestnftContract;
+    let TestExchangeContract;
+    let owner;
+    let addr1;
+    let addr2;
+    beforeEach(async function(){
+        [owner, addr1, addr2] = await ethers.getSigners();
+        const MyToken20 = await ethers.getContractFactory("My20ExchangeToken");
+        Test20Contract = await MyToken20.deploy();
+        await Test20Contract.deployed();
+        const MyToken721 = await ethers.getContractFactory("MyNFTEXToken");
+        TestnftContract = await MyToken721.deploy();
+        await TestnftContract.deployed();
+        const Exchange = await ethers.getContractFactory("TokenExchange");
+        TestExchangeContract = await Exchange.deploy(Test20Contract.address,addr1.address,TestnftContract.address,addr2.address);
+        await TestExchangeContract.deployed();
+    })
+    describe("Test contract", function () {
+        it("Should assign the total supply of token to the address1",async function(){
+            await Test20Contract.mint(addr1.address,1000);
+            expect(await Test20Contract.balanceOf(addr1.address)).to.equal(1000);});
+
+        it("Should assign the total supply of NFT to the address2",async function(){
+            await TestnftContract.safeMint(addr2.address);
+            await TestnftContract.safeMint(addr2.address);
+            expect(await TestnftContract.balanceOf(addr2.address)).to.equal(2);}); 
+            
+            
+        it("Should transfer token to nft",async function(){
+            await Test20Contract.mint(addr1.address,1000);
+            await TestnftContract.safeMint(addr2.address);
+            //await Test20Contract.approve(TestExchangeContract.address,100);
+            await TestnftContract.transferOwnership(addr2.address);
+            await TestnftContract.connect(addr2).setApprovalForAll(TestExchangeContract.address,true);
+            await Test20Contract.connect(addr1).approve(TestExchangeContract.address, 20);
+            await TestExchangeContract.connect(addr1).Transfer(20,0);
+            //await TestExchangeContract.Transfer(20,0);
+            expect(await Test20Contract.balanceOf(addr2.address)).to.equal(20);
+            expect(await TestnftContract.balanceOf(addr1.address)).to.equal(1);
+
+        })  
+    })
+ 
+})
