@@ -1,5 +1,5 @@
 const{expect}=require("chai");
-describe("Erc20 Contract",function(){
+describe("exchange Contract",function(){
     let Test20Contract;
     let TestnftContract;
     let TestExchangeContract;
